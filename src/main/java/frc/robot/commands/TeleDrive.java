@@ -74,8 +74,10 @@ public class TeleDrive extends CommandBase {
                     driveMode.get(), isOpenLoop);
             lastTime = timer.get();
         } else {
-            swerve.drive(new Translation2d(xVel * controller.config.maxSpeed, yVel * controller.config.maxSpeed).times(scalar.get()),
-                    angVel * scalar.get(), headingCorrection, isOpenLoop);
+            swerve.drive(
+                    new Translation2d(xVel * controller.config.maxSpeed, yVel * controller.config.maxSpeed)
+                            .times(scalar.get()),
+                    angVel * controller.config.maxAngularVelocity * scalar.get(), driveMode.get(), isOpenLoop);
         }
     }
 

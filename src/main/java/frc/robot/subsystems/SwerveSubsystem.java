@@ -7,9 +7,16 @@ package frc.robot.subsystems;
 import java.io.File;
 import java.io.IOException;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -28,6 +35,12 @@ public class SwerveSubsystem extends SubsystemBase {
         } catch (IOException e) {
             System.exit("https://www.youtube.com/watch?v=dQw4w9WgXcQ".hashCode());
         }
+
+        setBrake(true);
+    }
+
+    public void addVisionMesurment(Pose2d pose, double timestamp, boolean soft, Matrix<N3, N1> visionSTDevs) {
+        swerveDrive.addVisionMeasurement(pose, timestamp, soft, visionSTDevs);
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
@@ -59,6 +72,29 @@ public class SwerveSubsystem extends SubsystemBase {
         return swerveDrive.swerveController.getTargetSpeeds(xInput, yInput, angle.getRadians(), getHeading().getRadians());
     }
 
+    public Rotation3d getGyroRotation() {
+        return swerveDrive.getGyroRotation3d();
+    }
+
+    public ChassisSpeeds getFORobotVelocity() {
+        return swerveDrive.getFieldVelocity();
+    }
+
+    public Pose2d getRobotPose() {
+        return swerveDrive.getPose();
+    }
+
+    /**
+     * Locks the wheels by pointing them all toward the center of the Robot
+     */
+    public Command xxDrivexx() {
+        return run(swerveDrive::lockPose);
+    }
+
+    public void setBrake(boolean brake) {
+        swerveDrive.setMotorIdleMode(brake);
+    }
+
     @Override
     public void periodic() {
         swerveDrive.updateOdometry();
@@ -66,9 +102,6 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public static SwerveSubsystem getInstance(File directory) {
-        if (instance == null) {
-            instance = new SwerveSubsystem(directory);
-        }
-        return instance;
+        return instance == null ? instance = new SwerveSubsystem(directory) : instance;
     }
 }

@@ -16,6 +16,7 @@ import java.io.File;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -64,11 +65,14 @@ public class RobotContainer {
                 () -> MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
                 () -> MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
                 () -> MathUtil.applyDeadband(-m_driverController.getRightX(), OperatorConstants.LEFT_X_DEADBAND),
-                () -> true, false, true, this::getScalar));
+                () -> true, false, false/*DON'T USE TRUE!! */, this::getScalar));
+
+        m_driverController.start().onTrue(new InstantCommand(swerveSubsystem::zeroGyro));
+        m_driverController.x().whileTrue(swerveSubsystem.xxDrivexx());
     }
 
     private double getScalar() {
-        return m_driverController.getRightTriggerAxis() * 0.5 + 0.5;
+        return m_driverController.getRightTriggerAxis() * 0.50 + 0.5;
     }
 
     /**

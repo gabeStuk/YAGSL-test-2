@@ -6,7 +6,7 @@
       "id": 1,
       "canbus": "DriveSubsystem"
     },
-    "invertedIMU": false,
+    "invertedIMU": true,
     "modules": [
       "frontleft.json",
       "frontright.json",
