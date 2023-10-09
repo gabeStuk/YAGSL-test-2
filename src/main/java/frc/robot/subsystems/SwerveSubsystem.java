@@ -84,11 +84,19 @@ public class SwerveSubsystem extends SubsystemBase {
         return swerveDrive.getPose();
     }
 
+    public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
+        swerveDrive.setChassisSpeeds(chassisSpeeds);
+    }
+
     /**
      * Locks the wheels by pointing them all toward the center of the Robot
      */
     public Command xxDrivexx() {
         return run(swerveDrive::lockPose);
+    }
+
+    public void resetOdometry(Pose2d initHoloPos) {
+        swerveDrive.resetOdometry(initHoloPos);
     }
 
     public void setBrake(boolean brake) {
