@@ -4,7 +4,7 @@
     "imu": {
       "type": "navx",
       "id": 1,
-      "canbus": "DriveSubsystem"
+      "canbus": null
     },
     "invertedIMU": false,
     "modules": [

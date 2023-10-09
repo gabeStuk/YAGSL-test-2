@@ -5,14 +5,14 @@
     },
     "absoluteEncoderOffset": 106.34765625,
     "drive": {
-      "type": "neo",
+      "type": "sparkmax",
       "id": 6,
-      "canbus": "DriveSubsystem"
+      "canbus": null
     },
     "angle": {
-      "type": "neo",
+      "type": "sparkmax",
       "id": 5,
-      "canbus": "DriveSubsystem"
+      "canbus": null
     },
     "inverted": {
       "angle": true,
@@ -21,6 +21,6 @@
     "encoder": {
       "type": "cancoder",
       "id": 3,
-      "canbus": "DriveSubsystem"
+      "canbus": null
     }
   }
