@@ -5,12 +5,12 @@
     },
     "absoluteEncoderOffset": 233.7890625,
     "drive": {
-      "type": "falcon",
+      "type": "neo",
       "id": 8,
       "canbus": "DriveSubsystem"
     },
     "angle": {
-      "type": "falcon",
+      "type": "neo",
       "id": 7,
       "canbus": "DriveSubsystem"
     },
