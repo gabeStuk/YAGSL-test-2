@@ -28,6 +28,13 @@ public final class Autos {
         return Commands.sequence(new FollowTrajectory(swerve, e, true));
     }
 
+    public static CommandBase notGayAuto(SwerveSubsystem swerve) {
+        PathPlannerTrajectory notGay = PathPlanner.loadPath("straight just like me",
+                new PathConstraints(Auton.MAX_SPEED, Auton.MAX_ACCEL));
+
+        return Commands.sequence(new FollowTrajectory(swerve, notGay, true));
+    }
+
     private Autos() {
         throw new UnsupportedOperationException("This is a utility class!");
     }

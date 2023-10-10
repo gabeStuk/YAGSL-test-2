@@ -15,6 +15,7 @@ import java.io.File;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -51,7 +52,9 @@ public class RobotContainer {
     }
 
     private void initAutonChooser() {
-        autonChooser.setDefaultOption("e path", Autos.eAuto(swerveSubsystem));
+        autonChooser.setDefaultOption("not gayyyyy", Autos.notGayAuto(swerveSubsystem));
+        autonChooser.addOption("e ^ i * pi = -1", Autos.eAuto(swerveSubsystem));
+        SmartDashboard.putData("Auto Choices", autonChooser);
     }
 
     /**
