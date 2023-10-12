@@ -27,6 +27,8 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 public class SwerveSubsystem extends SubsystemBase {
     private SwerveDrive swerveDrive;
     public boolean thingY = false;
+    public boolean halfPath1 = false;
+    public boolean halfPath2 = false;
     private static SwerveSubsystem instance;
     /** Creates a new SwerveSubsystem. */
     private SwerveSubsystem(File directory) {
@@ -108,6 +110,8 @@ public class SwerveSubsystem extends SubsystemBase {
     public void periodic() {
         swerveDrive.updateOdometry();
         SmartDashboard.putBoolean("thingyyyy", thingY);
+        SmartDashboard.putBoolean("Half Path 1", halfPath1);
+        SmartDashboard.putBoolean("Half Path 2", halfPath2);
         // This method will be called once per scheduler run
     }
 
