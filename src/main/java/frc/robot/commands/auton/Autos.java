@@ -5,22 +5,22 @@
 package frc.robot.commands.auton;
 
 import frc.robot.Constants.Auton;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+
+import java.util.HashMap;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.PIDConstants;
+import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 public final class Autos {
-    /** Example static factory for an autonomous command. */
-    public static CommandBase exampleAuto(ExampleSubsystem subsystem) {
-        return Commands.sequence(subsystem.exampleMethodCommand(), new ExampleCommand(subsystem));
-    }
 
     public static CommandBase eAuto(SwerveSubsystem swerve) {
         PathPlannerTrajectory e = PathPlanner.loadPath("e", new PathConstraints(Auton.MAX_SPEED, Auton.MAX_ACCEL));
@@ -33,6 +33,36 @@ public final class Autos {
                 new PathConstraints(Auton.MAX_SPEED, Auton.MAX_ACCEL));
 
         return Commands.sequence(new FollowTrajectory(swerve, notGay, true));
+    }
+
+    public static CommandBase notGayEventMapAuto(SwerveSubsystem swerve) {
+        PathPlannerTrajectory notGayMap = PathPlanner.loadPath("straight map", new PathConstraints(Auton.MAX_SPEED, Auton.MAX_ACCEL));
+        HashMap<String, Command> eventMap = new HashMap<>();
+        eventMap.put("print", new InstantCommand(() -> swerve.thingY = true));
+        SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+            swerve::getRobotPose,
+            swerve::resetOdometry,
+            new PIDConstants(Auton.yAutoPID.p, Auton.yAutoPID.i, Auton.yAutoPID.d),
+            new PIDConstants(Auton.angleAutoPID.p, Auton.angleAutoPID.i, Auton.angleAutoPID.d),
+            swerve::setChassisSpeeds,
+            eventMap,
+            swerve);
+        return Commands.sequence(autoBuilder.fullAuto(notGayMap));
+    }
+
+    public static CommandBase e2Path(SwerveSubsystem swerve) {
+        PathPlannerTrajectory e2Traj = PathPlanner.loadPath("e2", new PathConstraints(Auton.MAX_SPEED, Auton.MAX_ACCEL));
+        HashMap<String, Command> eventMap = new HashMap<>();
+        eventMap.put("e2Event", new InstantCommand(System.out::println));
+        SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+            swerve::getRobotPose,
+            swerve::resetOdometry,
+            new PIDConstants(Auton.yAutoPID.p, Auton.yAutoPID.i, Auton.yAutoPID.d),
+            new PIDConstants(Auton.angleAutoPID.p, Auton.angleAutoPID.i, Auton.angleAutoPID.d),
+            swerve::setChassisSpeeds,
+            eventMap,
+            swerve);
+        return Commands.sequence(autoBuilder.fullAuto(e2Traj));
     }
 
     private Autos() {

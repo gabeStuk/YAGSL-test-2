@@ -15,7 +15,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import swervelib.SwerveController;
@@ -26,6 +26,7 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 public class SwerveSubsystem extends SubsystemBase {
     private SwerveDrive swerveDrive;
+    public boolean thingY = false;
     private static SwerveSubsystem instance;
     /** Creates a new SwerveSubsystem. */
     private SwerveSubsystem(File directory) {
@@ -106,6 +107,7 @@ public class SwerveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         swerveDrive.updateOdometry();
+        SmartDashboard.putBoolean("thingyyyy", thingY);
         // This method will be called once per scheduler run
     }
 
