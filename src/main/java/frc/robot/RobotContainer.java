@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.TeleDrive;
 import frc.robot.commands.auton.Autos;
+import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.SwerveSubsystem;
 
 import java.io.File;
@@ -33,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
     private final SwerveSubsystem swerveSubsystem = SwerveSubsystem
             .getInstance(new File(Filesystem.getDeployDirectory(), "swerve"));
+    private final Limelight limelight = Limelight.getInstance();
     // Replace with CommandPS4Controller or CommandJoystick if needed
     private final CommandXboxController m_driverController = new CommandXboxController(
             OperatorConstants.kDriverControllerPort);
@@ -52,7 +54,7 @@ public class RobotContainer {
         autonChooser.setDefaultOption("not gayyyyy", Autos.notGayAuto(swerveSubsystem));
         autonChooser.addOption("e ^ i * pi = -1", Autos.eAuto(swerveSubsystem));
         autonChooser.addOption("not gay with map", Autos.notGayEventMapAuto(swerveSubsystem));
-        autonChooser.addOption("e2", Autos.e2Path(swerveSubsystem));
+        autonChooser.addOption("e2", Autos.e2Path(swerveSubsystem, limelight));
         SmartDashboard.putData("Auto Choices", autonChooser);
     }
 

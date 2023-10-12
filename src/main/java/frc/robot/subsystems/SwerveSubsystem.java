@@ -40,8 +40,12 @@ public class SwerveSubsystem extends SubsystemBase {
         setBrake(true);
     }
 
-    public void addVisionMesurment(Pose2d pose, double timestamp, boolean soft, Matrix<N3, N1> visionSTDevs) {
+    public void addVisionMeasurement(Pose2d pose, double timestamp, boolean soft, Matrix<N3, N1> visionSTDevs) {
         swerveDrive.addVisionMeasurement(pose, timestamp, soft, visionSTDevs);
+    }
+
+    public void addVisionMeasurement(Pose2d pose, double timestamp, boolean soft, double trustWothiness) {
+        swerveDrive.addVisionMeasurement(pose, timestamp, soft, trustWothiness);
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
