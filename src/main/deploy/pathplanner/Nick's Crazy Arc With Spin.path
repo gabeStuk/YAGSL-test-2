@@ -7,36 +7,11 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.081606476380215,
-        "y": 4.564416246270215
+        "x": 7.148170879971655,
+        "y": 5.192023480132369
       },
       "holonomicAngle": 0,
       "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 8.289274941539208,
-        "y": 4.849692261662104
-      },
-      "prevControl": {
-        "x": 8.308293342559303,
-        "y": 3.8702446088200277
-      },
-      "nextControl": {
-        "x": 8.308293342559303,
-        "y": 3.8702446088200277
-      },
-      "holonomicAngle": -90.0,
-      "isReversal": true,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
@@ -53,8 +28,8 @@
         "y": 3.37
       },
       "prevControl": {
-        "x": 9.496943406692171,
-        "y": 4.558650064136276
+        "x": 9.515961807724329,
+        "y": 5.049385472436425
       },
       "nextControl": null,
       "holonomicAngle": 180.0,
@@ -78,7 +53,7 @@
       ]
     },
     {
-      "position": 1.5757575757575772,
+      "position": 0.5757575757575772,
       "names": [
         "Halfish Way Through Path 2"
       ]

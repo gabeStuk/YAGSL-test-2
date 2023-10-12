@@ -51,6 +51,7 @@ public class RobotContainer {
     private void initAutonChooser() {
         autonChooser.setDefaultOption("not gayyyyy", Autos.notGayAuto(swerveSubsystem));
         autonChooser.addOption("Nick's Epic Arc", Autos.nicksArc(swerveSubsystem));
+        autonChooser.addOption("Nick's Epic Arc With Spin", Autos.nicksArcWithSpin(swerveSubsystem));
         autonChooser.addOption("e ^ i * pi = -1", Autos.eAuto(swerveSubsystem));
         autonChooser.addOption("not gay with map", Autos.notGayEventMapAuto(swerveSubsystem));
         autonChooser.addOption("e2", Autos.e2Path(swerveSubsystem));

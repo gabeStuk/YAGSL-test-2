@@ -82,6 +82,23 @@ public final class Autos {
 
     }
 
+    public static CommandBase nicksArcWithSpin(SwerveSubsystem swerve) {
+        PathPlannerTrajectory arcWithSpinTraj = PathPlanner.loadPath("Nick's Crazy Arc With Spin", new PathConstraints(Auton.MAX_SPEED, Auton.MAX_ACCEL));
+        HashMap<String, Command> eventMap = new HashMap<>();
+        eventMap.put("Halfish Way Through Path 1", new InstantCommand(() -> swerve.halfPath1 = true));
+        eventMap.put("Halfish Way Through Path 2", new InstantCommand(() -> swerve.halfPath2 = true));
+        SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+            swerve::getRobotPose,
+            swerve::resetOdometry,
+            new PIDConstants(Auton.yAutoPID.p, Auton.yAutoPID.i, Auton.yAutoPID.d), 
+            new PIDConstants(Auton.angleAutoPID.p, Auton.angleAutoPID.i, Auton.angleAutoPID.d), 
+            swerve::setChassisSpeeds, 
+            eventMap, 
+            swerve);
+        return Commands.sequence(autoBuilder.fullAuto(arcWithSpinTraj));
+
+    }
+
     private Autos() {
         throw new UnsupportedOperationException("This is a utility class!");
     }
