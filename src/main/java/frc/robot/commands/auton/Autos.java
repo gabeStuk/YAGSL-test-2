@@ -61,7 +61,7 @@ public final class Autos {
             if (pose.isPresent()) {
                 var poseUnwrapped = pose.get();
                 swerve.addVisionMeasurement(poseUnwrapped.estimatedPose.toPose2d(), poseUnwrapped.timestampSeconds,
-                        true,
+                        false,
                         0.5);
             }
 
