@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.TeleDrive;
 import frc.robot.commands.auton.Autos;
+import frc.robot.subsystems.InfeedSolinoids;
 import frc.robot.subsystems.SwerveSubsystem;
 
 import java.io.File;
@@ -33,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
     private final SwerveSubsystem swerveSubsystem = SwerveSubsystem
             .getInstance(new File(Filesystem.getDeployDirectory(), "swerve"));
+    private final InfeedSolinoids infeed = new InfeedSolinoids();
     // Replace with CommandPS4Controller or CommandJoystick if needed
     private final CommandXboxController m_driverController = new CommandXboxController(
             OperatorConstants.kDriverControllerPort);
@@ -81,6 +83,7 @@ public class RobotContainer {
 
         m_driverController.start().onTrue(new InstantCommand(swerveSubsystem::zeroGyro));
         m_driverController.x().whileTrue(swerveSubsystem.xxDrivexx());
+        m_driverController.a().onTrue(infeed.toggleInfeedSolenoidCommand());
     }
 
     private double getScalar() {
