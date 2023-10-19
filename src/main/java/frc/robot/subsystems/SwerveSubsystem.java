@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -38,6 +39,9 @@ public class SwerveSubsystem extends SubsystemBase {
         }
 
         setBrake(true);
+        swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward((0.19 + 0.225 + 0.214 + 0.2256) / 4.0,
+        (2.2565 + 2.2785 + 2.2754 + 2.291) / 4.0,
+        (0.277 + 0.31) / 2.0));
     }
 
     public void addVisionMeasurement(Pose2d pose, double timestamp, boolean soft, Matrix<N3, N1> visionSTDevs) {
