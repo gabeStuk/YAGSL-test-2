@@ -33,4 +33,9 @@ public final class Constants {
         public static final double MAX_SPEED = 2;
         public static final double MAX_ACCEL = 2;
     }
+
+    public static final class FieldConstants {
+        /** in metres */
+        public static final double FIELD_WIDTH = 8.0137;
+    }
 }

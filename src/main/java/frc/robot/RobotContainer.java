@@ -5,15 +5,17 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.RobotContainer.Nodes.TheNodes;
 import frc.robot.commands.TeleDrive;
 import frc.robot.commands.auton.Autos;
+import frc.robot.commands.swerve.AutoAlignToNode;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.SwerveSubsystem;
 
-import java.io.File;
-
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,12 +34,18 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-    private final SwerveSubsystem swerveSubsystem = SwerveSubsystem
-            .getInstance(new File(Filesystem.getDeployDirectory(), "swerve"));
-    private final Limelight limelight = Limelight.getInstance();
+    private final SwerveSubsystem swerveSubsystem = SwerveSubsystem.getInstance();
+    private final String FRONT_CAM_NAME = "Front_AprilTag_Camera";
+    private Nodes.TheNodes nodeOn = TheNodes.ZERO;
+    private final Pose3d FRONT_CAM_TO_ROBOT = new Pose3d(Units.inchesToMeters(-3.3125),
+            Units.inchesToMeters(5.5625), 0.,
+            new Rotation3d(0., Units.degreesToRadians(0.),
+                    Units.degreesToRadians(180.)));
     // Replace with CommandPS4Controller or CommandJoystick if needed
     private final CommandXboxController m_driverController = new CommandXboxController(
             OperatorConstants.kDriverControllerPort);
+
+    private final Limelight limelight = new Limelight(FRONT_CAM_NAME, FRONT_CAM_TO_ROBOT.minus(new Pose3d()));
 
     private final SendableChooser<CommandBase> autonChooser = new SendableChooser<>();
 
@@ -81,6 +89,9 @@ public class RobotContainer {
 
         m_driverController.start().onTrue(new InstantCommand(swerveSubsystem::zeroGyro));
         m_driverController.x().whileTrue(swerveSubsystem.xxDrivexx());
+        m_driverController.povLeft().onTrue(new InstantCommand(() -> nodeOn = Nodes.decrementNode(nodeOn)));
+        m_driverController.povRight().onTrue(new InstantCommand(() -> nodeOn = Nodes.incrementNode(nodeOn)));
+        m_driverController.y().onTrue(new AutoAlignToNode(swerveSubsystem, limelight, nodeOn.name()));
     }
 
     private double getScalar() {
@@ -95,5 +106,67 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         // An example command will be run in autonomous
         return autonChooser.getSelected();
+    }
+
+    public static class Nodes {
+        public enum TheNodes {
+            ZERO(6, -1), ONE(6, 0), TWO(6, 1),
+            THREE(7, -1), FOUR(7, 0), FIVE(7, 1),
+            SIX(8, -1), SEVEN(8, 0), EIGHT(8, 1);
+
+            public int closestTag;
+            public int tagOffset;
+
+            TheNodes(int closestTag, int tagOffset) {
+                this.closestTag = closestTag;
+                this.tagOffset = tagOffset;
+            }
+        }
+
+        public static TheNodes incrementNode(TheNodes node) {
+            switch (node) {
+                case ZERO:
+                    return TheNodes.ONE;
+                case ONE:
+                    return TheNodes.TWO;
+                case TWO:
+                    return TheNodes.THREE;
+                case THREE:
+                    return TheNodes.FOUR;
+                case FOUR:
+                    return TheNodes.FIVE;
+                case FIVE:
+                    return TheNodes.SIX;
+                case SIX:
+                    return TheNodes.SEVEN;
+                case SEVEN:
+                case EIGHT:
+                default:
+                    return TheNodes.EIGHT;
+            }
+        }
+
+        public static TheNodes decrementNode(TheNodes node) {
+            switch (node) {
+                case EIGHT:
+                    return TheNodes.SEVEN;
+                case SEVEN:
+                    return TheNodes.SIX;
+                case SIX:
+                    return TheNodes.FIVE;
+                case FIVE:
+                    return TheNodes.FOUR;
+                case FOUR:
+                    return TheNodes.THREE;
+                case THREE:
+                    return TheNodes.TWO;
+                case TWO:
+                    return TheNodes.ONE;
+                case ONE:
+                case ZERO:
+                default:
+                    return TheNodes.ZERO;
+            }
+        }
     }
 }

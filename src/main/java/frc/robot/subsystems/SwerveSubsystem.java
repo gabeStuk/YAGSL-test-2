@@ -16,11 +16,13 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
+import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
@@ -29,19 +31,37 @@ public class SwerveSubsystem extends SubsystemBase {
     private SwerveDrive swerveDrive;
     public boolean thingY = false;
     private static SwerveSubsystem instance;
+
+    static {
+        SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+    }
+
+    {
+        setBrake(true);
+        swerveDrive.replaceSwerveModuleFeedforward(
+                new SimpleMotorFeedforward(
+                        (.2212 + .151 + .163) / 3.,
+                        (2.3 + 2.32 + 2.33) / 3.,
+                        (.421 + .849 + .708) / 3.
+                )
+        );
+    }
+
     /** Creates a new SwerveSubsystem. */
     private SwerveSubsystem(File directory) {
-        SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         try {
             swerveDrive = new SwerveParser(directory).createSwerveDrive();
         } catch (IOException e) {
             System.exit("https://www.youtube.com/watch?v=dQw4w9WgXcQ".hashCode());
         }
+    }
 
-        setBrake(true);
-        swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward((0.19 + 0.225 + 0.214 + 0.2256) / 4.0,
-        (2.2565 + 2.2785 + 2.2754 + 2.291) / 4.0,
-        (0.277 + 0.31) / 2.0));
+    private SwerveSubsystem() {
+        try {
+            swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve")).createSwerveDrive();
+        } catch (IOException e) {
+            System.exit("https://www.youtube.com/watch?v=dQw4w9WgXcQ".hashCode());
+        }
     }
 
     public void addVisionMeasurement(Pose2d pose, double timestamp, boolean soft, Matrix<N3, N1> visionSTDevs) {
@@ -66,6 +86,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public SwerveController getController() {
         return swerveDrive.swerveController;
+    }
+
+    public SwerveDriveConfiguration getConfig() {
+        return swerveDrive.swerveDriveConfiguration;
     }
 
     public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double headingX, double headingY) {
@@ -116,10 +140,13 @@ public class SwerveSubsystem extends SubsystemBase {
     public void periodic() {
         swerveDrive.updateOdometry();
         SmartDashboard.putBoolean("thingyyyy", thingY);
-        // This method will be called once per scheduler run
     }
 
     public static SwerveSubsystem getInstance(File directory) {
         return instance == null ? instance = new SwerveSubsystem(directory) : instance;
+    }
+
+    public static SwerveSubsystem getInstance() {
+        return instance == null ? instance = new SwerveSubsystem() : instance;
     }
 }
