@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.commands.auton.FollowTrajectory;
 import frc.robot.subsystems.PhotonCam;
@@ -50,7 +51,7 @@ public class AutoAlignToNode extends CommandBase {
         var pose = camera.getEstimatedPos();
         if (pose.isPresent()) {
             var poseUnwrapped = pose.get();
-            drivetrain.addVisionMeasurement(poseUnwrapped.estimatedPose.toPose2d(), poseUnwrapped.timestampSeconds, false, .5);
+            drivetrain.addVisionMeasurement(poseUnwrapped.estimatedPose.toPose2d(), poseUnwrapped.timestampSeconds);
         }
 
         Pose2d nodePose;
@@ -126,7 +127,7 @@ public class AutoAlignToNode extends CommandBase {
         if (roboPose.equals(desiredPose))
             return new PathPlannerTrajectory();
 
-        double driveMaxVel = drivetrain.getConfig().maxSpeed * 0.25;
+        double driveMaxVel = DriveConstants.MAX_SPD_MPS * 0.25;
 
         PathConstraints constraints = new PathConstraints(
                 driveMaxVel,

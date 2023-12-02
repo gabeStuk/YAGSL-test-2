@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.DriveConstants;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveDriveConfiguration;
@@ -39,7 +40,7 @@ public class SwerveSubsystem extends SubsystemBase {
     /** Creates a new SwerveSubsystem. */
     private SwerveSubsystem(File directory) {
         try {
-            swerveDrive = new SwerveParser(directory).createSwerveDrive();
+            swerveDrive = new SwerveParser(directory).createSwerveDrive(DriveConstants.MAX_SPD_MPS);
         } catch (IOException e) {
             System.exit("https://www.youtube.com/watch?v=dQw4w9WgXcQ".hashCode());
         }
@@ -57,20 +58,12 @@ public class SwerveSubsystem extends SubsystemBase {
         this(new File(Filesystem.getDeployDirectory(), "swerve"));
     }
 
-    //2023.1.6
-    // public void addVisionMeasurement(Pose2d pose, double timestamp, Matrix<N3, N1> visionSTDevs) {
-    //     swerveDrive.addVisionMeasurement(pose, timestamp, visionSTDevs);
-    // }
-
-    // public void addVisionMeasurement(Pose2d pose, double timestamp) {
-    //     swerveDrive.addVisionMeasurement(pose, timestamp);
-    // }
-    public void addVisionMeasurement(Pose2d pose, double timestamp, boolean soft, Matrix<N3, N1> visionSTDevs) {
-        swerveDrive.addVisionMeasurement(pose, timestamp, soft, visionSTDevs);
+    public void addVisionMeasurement(Pose2d pose, double timestamp, Matrix<N3, N1> visionSTDevs) {
+        swerveDrive.addVisionMeasurement(pose, timestamp, visionSTDevs);
     }
 
-    public void addVisionMeasurement(Pose2d pose, double timestamp, boolean soft, double trustworthiness) {
-        swerveDrive.addVisionMeasurement(pose, timestamp, soft, trustworthiness);
+    public void addVisionMeasurement(Pose2d pose, double timestamp) {
+        swerveDrive.addVisionMeasurement(pose, timestamp);
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
@@ -116,7 +109,8 @@ public class SwerveSubsystem extends SubsystemBase {
     public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, Rotation2d angle) {
         xInput = Math.pow(xInput, 3);
         yInput = Math.pow(yInput, 3);
-        return swerveDrive.swerveController.getTargetSpeeds(xInput, yInput, angle.getRadians(), getHeading().getRadians());
+        return swerveDrive.swerveController.getTargetSpeeds(xInput, yInput, angle.getRadians(), getHeading().getRadians()   
+            , DriveConstants.MAX_SPD_MPS);
     }
 
     public Rotation3d getGyroRotation() {

@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.OneMechanism.GamePieceMode;
 import frc.robot.OneMechanism.ScoringPositions;
@@ -85,9 +86,7 @@ public class RobotContainer {
     }
 
     private void initAutonChooser() {
-        autonChooser.setDefaultOption("not gayyyyy", Autos.notGayAuto(swerveSubsystem));
-        autonChooser.addOption("e ^ i * pi = -1", Autos.eAuto(swerveSubsystem));
-        autonChooser.addOption("not gay with map", Autos.notGayEventMapAuto(swerveSubsystem));
+        autonChooser.setDefaultOption("e ^ i * pi = -1", Autos.eAuto(swerveSubsystem));
         autonChooser.addOption("e2", Autos.e2Path(swerveSubsystem, frontCam));
         SmartDashboard.putData("Auto Choices", autonChooser);
     }
@@ -122,15 +121,15 @@ public class RobotContainer {
             if (pose.isPresent()) {
                 var poseUnwrapped = pose.get();
                 swerveSubsystem.addVisionMeasurement(poseUnwrapped.estimatedPose.toPose2d(),
-                        poseUnwrapped.timestampSeconds, false, 0.5);
+                        poseUnwrapped.timestampSeconds);
             }
         }));
 
         m_driverController.b().toggleOnTrue(new LimelightSquare(
                 () -> OneMechanism.getGamePieceMode().equals(GamePieceMode.ORANGE_CONE),
                 true,
-                () -> applyScalarAndDeadbandY() * swerveSubsystem.getConfig().maxSpeed / 2,
-                () -> applyScalarAndDeadbandX() * swerveSubsystem.getConfig().maxSpeed / 2,
+                () -> applyScalarAndDeadbandY() * DriveConstants.MAX_SPD_MPS / 2,
+                () -> applyScalarAndDeadbandX() * DriveConstants.MAX_SPD_MPS / 2,
                 swerveSubsystem));
 
         m_driverController.back().onTrue(wrist.runToAngle(ScoringPositions.STOWED.wristAngle)

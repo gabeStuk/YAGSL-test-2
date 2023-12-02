@@ -33,6 +33,10 @@ public final class Constants {
         public static final double MAX_ACCEL = 2;
     }
 
+    public static final class DriveConstants {
+        public static final double MAX_SPD_MPS = 14.5;
+    }
+
     public static final class FieldConstants {
         /** in metres */
         public static final double FIELD_WIDTH = 8.0137;

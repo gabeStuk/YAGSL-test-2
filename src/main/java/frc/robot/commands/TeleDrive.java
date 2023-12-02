@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveController;
 
@@ -68,14 +69,14 @@ public class TeleDrive extends CommandBase {
             // angle += angVel * controller.config.maxAngularVelocity;
 
             ChassisSpeeds correctedChassisSpeeds = controller.getTargetSpeeds(xVel, yVel, angle,
-                    swerve.getHeading().getRadians(), controller.config.maxSpeed);
+                    swerve.getHeading().getRadians(), DriveConstants.MAX_SPD_MPS);
             swerve.drive(SwerveController.getTranslation2d(correctedChassisSpeeds).times(scalar.get()),
                     correctedChassisSpeeds.omegaRadiansPerSecond * scalar.get(),
                     driveMode.get(), isOpenLoop);
             lastTime = timer.get();
         } else {
             swerve.drive(
-                    new Translation2d(xVel * controller.config.maxSpeed, yVel * controller.config.maxSpeed)
+                    new Translation2d(xVel * DriveConstants.MAX_SPD_MPS, yVel * DriveConstants.MAX_SPD_MPS)
                             .times(scalar.get()),
                     angVel * controller.config.maxAngularVelocity * scalar.get(), driveMode.get(), isOpenLoop);
         }

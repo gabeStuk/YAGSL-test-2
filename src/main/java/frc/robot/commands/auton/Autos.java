@@ -33,28 +33,6 @@ public final class Autos {
         return Commands.sequence(new FollowTrajectory(swerve, e, true));
     }
 
-    public static CommandBase notGayAuto(SwerveSubsystem swerve) {
-        PathPlannerTrajectory notGay = PathPlanner.loadPath("straight just like me",
-                new PathConstraints(Auton.MAX_SPEED, Auton.MAX_ACCEL));
-
-        return Commands.sequence(new FollowTrajectory(swerve, notGay, true));
-    }
-
-    public static CommandBase notGayEventMapAuto(SwerveSubsystem swerve) {
-        PathPlannerTrajectory notGayMap = PathPlanner.loadPath("straight map",
-                new PathConstraints(Auton.MAX_SPEED, Auton.MAX_ACCEL));
-        HashMap<String, Command> eventMap = new HashMap<>();
-        eventMap.put("print", new InstantCommand(() -> swerve.thingY = true));
-        SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
-                swerve::getRobotPose,
-                swerve::resetOdometry,
-                new PIDConstants(Auton.yAutoPID.p, Auton.yAutoPID.i, Auton.yAutoPID.d),
-                new PIDConstants(Auton.angleAutoPID.p, Auton.angleAutoPID.i, Auton.angleAutoPID.d),
-                swerve::setChassisSpeeds,
-                eventMap,
-                swerve);
-        return Commands.sequence(autoBuilder.fullAuto(notGayMap));
-    }
 
     public static CommandBase e2Path(SwerveSubsystem swerve, PhotonCam limelight) {
         PathPlannerTrajectory e2Traj = PathPlanner.loadPath("e2",
@@ -64,7 +42,7 @@ public final class Autos {
             var pose = limelight.getEstimatedPos();
             if (pose.isPresent()) {
                 var poseUnwrapped = pose.get();
-                swerve.addVisionMeasurement(poseUnwrapped.estimatedPose.toPose2d(), poseUnwrapped.timestampSeconds, false, .5);
+                swerve.addVisionMeasurement(poseUnwrapped.estimatedPose.toPose2d(), poseUnwrapped.timestampSeconds);
             }
 
         }));
