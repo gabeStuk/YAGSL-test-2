@@ -68,7 +68,7 @@ public class TeleDrive extends CommandBase {
             // angle += angVel * controller.config.maxAngularVelocity;
 
             ChassisSpeeds correctedChassisSpeeds = controller.getTargetSpeeds(xVel, yVel, angle,
-                    swerve.getHeading().getRadians());
+                    swerve.getHeading().getRadians(), controller.config.maxSpeed);
             swerve.drive(SwerveController.getTranslation2d(correctedChassisSpeeds).times(scalar.get()),
                     correctedChassisSpeeds.omegaRadiansPerSecond * scalar.get(),
                     driveMode.get(), isOpenLoop);

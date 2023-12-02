@@ -36,8 +36,14 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     }
 
-    {
-        setBrake(true);
+    /** Creates a new SwerveSubsystem. */
+    private SwerveSubsystem(File directory) {
+        try {
+            swerveDrive = new SwerveParser(directory).createSwerveDrive();
+        } catch (IOException e) {
+            System.exit("https://www.youtube.com/watch?v=dQw4w9WgXcQ".hashCode());
+        }
+        swerveDrive.setMotorIdleMode(true);
         swerveDrive.replaceSwerveModuleFeedforward(
                 new SimpleMotorFeedforward(
                         (.2212 + .151 + .163) / 3.,
@@ -47,33 +53,41 @@ public class SwerveSubsystem extends SubsystemBase {
         );
     }
 
-    /** Creates a new SwerveSubsystem. */
-    private SwerveSubsystem(File directory) {
-        try {
-            swerveDrive = new SwerveParser(directory).createSwerveDrive();
-        } catch (IOException e) {
-            System.exit("https://www.youtube.com/watch?v=dQw4w9WgXcQ".hashCode());
-        }
-    }
-
     private SwerveSubsystem() {
-        try {
-            swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve")).createSwerveDrive();
-        } catch (IOException e) {
-            System.exit("https://www.youtube.com/watch?v=dQw4w9WgXcQ".hashCode());
-        }
+        this(new File(Filesystem.getDeployDirectory(), "swerve"));
     }
 
+    //2023.1.6
+    // public void addVisionMeasurement(Pose2d pose, double timestamp, Matrix<N3, N1> visionSTDevs) {
+    //     swerveDrive.addVisionMeasurement(pose, timestamp, visionSTDevs);
+    // }
+
+    // public void addVisionMeasurement(Pose2d pose, double timestamp) {
+    //     swerveDrive.addVisionMeasurement(pose, timestamp);
+    // }
     public void addVisionMeasurement(Pose2d pose, double timestamp, boolean soft, Matrix<N3, N1> visionSTDevs) {
         swerveDrive.addVisionMeasurement(pose, timestamp, soft, visionSTDevs);
     }
 
-    public void addVisionMeasurement(Pose2d pose, double timestamp, boolean soft, double trustWothiness) {
-        swerveDrive.addVisionMeasurement(pose, timestamp, soft, trustWothiness);
+    public void addVisionMeasurement(Pose2d pose, double timestamp, boolean soft, double trustworthiness) {
+        swerveDrive.addVisionMeasurement(pose, timestamp, soft, trustworthiness);
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
         swerveDrive.drive(translation, rotation, fieldRelative, isOpenLoop);
+    }
+
+    public void drive(ChassisSpeeds speeds, boolean fieldRelative) {
+        swerveDrive.drive(
+            new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond),
+            speeds.omegaRadiansPerSecond,
+            fieldRelative,
+            false
+        );
+    }
+
+    public void drive(ChassisSpeeds speeds) {
+        drive(speeds, true);
     }
 
     public void zeroGyro() {

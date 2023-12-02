@@ -18,29 +18,29 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Limelight extends SubsystemBase {
+public class PhotonCam extends SubsystemBase {
 
-    private PhotonCamera limelight;
+    private PhotonCamera photonCam;
     private AprilTagFieldLayout fieldLayout;
     private PhotonPoseEstimator poseEstimator;
 
     /** Creates a new Limelight. */
-    public Limelight(String camName, Transform3d robotToCam) {
-        limelight = new PhotonCamera(camName);
+    public PhotonCam(String camName, Transform3d robotToCam) {
+        photonCam = new PhotonCamera(camName);
         try {
             fieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
-            poseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP, limelight, robotToCam);
+            poseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP, photonCam, robotToCam);
         } catch (IOException e) {
             throw new RuntimeException("There was a camera error.");
         }
     }
 
     public PhotonPipelineResult getLatestResult() {
-        return limelight.getLatestResult();
+        return photonCam.getLatestResult();
     }
 
     public PhotonTrackedTarget getBestTarget() {
-        return limelight.getLatestResult().getBestTarget();
+        return photonCam.getLatestResult().getBestTarget();
     }
 
     public Optional<EstimatedRobotPose> getEstimatedPos() {

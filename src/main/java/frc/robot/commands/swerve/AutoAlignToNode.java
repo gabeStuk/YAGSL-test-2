@@ -21,22 +21,21 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.commands.auton.FollowTrajectory;
-import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.PhotonCam;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class AutoAlignToNode extends CommandBase {
 
     SwerveSubsystem drivetrain;
-    Limelight camera;
+    PhotonCam camera;
     Alliance isBlue = DriverStation.getAlliance();
     RobotContainer.Nodes.TheNodes node;
 
-    /** Creates a new AutoAlignToNodew. */
-    public AutoAlignToNode(SwerveSubsystem drivetrain, Limelight camera, String nodeName) {
+    /** Creates a new AutoAlignToNode. */
+    public AutoAlignToNode(SwerveSubsystem drivetrain, PhotonCam camera, String nodeName) {
 
-        for (RobotContainer.Nodes.TheNodes node : RobotContainer.Nodes.TheNodes.values()) {
+        for (RobotContainer.Nodes.TheNodes node : RobotContainer.Nodes.TheNodes.values())
             this.node = node.name().equalsIgnoreCase(nodeName) ? node : this.node;
-        }
 
         this.drivetrain = drivetrain;
 
@@ -49,12 +48,10 @@ public class AutoAlignToNode extends CommandBase {
     public void initialize() {
 
         var pose = camera.getEstimatedPos();
-            if (pose.isPresent()) {
-                var poseUnwrapped = pose.get();
-                drivetrain.addVisionMeasurement(poseUnwrapped.estimatedPose.toPose2d(), poseUnwrapped.timestampSeconds,
-                        false,
-                        0.5);
-            }
+        if (pose.isPresent()) {
+            var poseUnwrapped = pose.get();
+            drivetrain.addVisionMeasurement(poseUnwrapped.estimatedPose.toPose2d(), poseUnwrapped.timestampSeconds, false, .5);
+        }
 
         Pose2d nodePose;
         switch (node) {
@@ -101,11 +98,10 @@ public class AutoAlignToNode extends CommandBase {
         }
 
         new FollowTrajectory(
-            drivetrain, 
-            PathPlannerTrajectory.transformTrajectoryForAlliance(generateTrajToPose(nodePose),
-                isBlue),
-            true
-        ).schedule();
+                drivetrain,
+                PathPlannerTrajectory.transformTrajectoryForAlliance(generateTrajToPose(nodePose),
+                        isBlue),
+                true).schedule();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -127,9 +123,8 @@ public class AutoAlignToNode extends CommandBase {
     public PathPlannerTrajectory generateTrajToPose(Pose2d desiredPose) {
         Pose2d roboPose = drivetrain.getRobotPose();
 
-        if (roboPose.equals(desiredPose)) {
+        if (roboPose.equals(desiredPose))
             return new PathPlannerTrajectory();
-        }
 
         double driveMaxVel = drivetrain.getConfig().maxSpeed * 0.25;
 

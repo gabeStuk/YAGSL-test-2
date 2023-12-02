@@ -4,9 +4,13 @@
 
 package frc.robot.commands.auton;
 
+import frc.robot.OneMechanism;
 import frc.robot.Constants.Auton;
-import frc.robot.subsystems.Limelight;
+import frc.robot.OneMechanism.ScoringPositions;
+import frc.robot.commands.vision.LimelightSquare;
+import frc.robot.subsystems.PhotonCam;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.manipulator.Gripper;
 
 import java.util.HashMap;
 
@@ -52,7 +56,7 @@ public final class Autos {
         return Commands.sequence(autoBuilder.fullAuto(notGayMap));
     }
 
-    public static CommandBase e2Path(SwerveSubsystem swerve, Limelight limelight) {
+    public static CommandBase e2Path(SwerveSubsystem swerve, PhotonCam limelight) {
         PathPlannerTrajectory e2Traj = PathPlanner.loadPath("e2",
                 new PathConstraints(Auton.MAX_SPEED, Auton.MAX_ACCEL));
         HashMap<String, Command> eventMap = new HashMap<>();
@@ -60,9 +64,7 @@ public final class Autos {
             var pose = limelight.getEstimatedPos();
             if (pose.isPresent()) {
                 var poseUnwrapped = pose.get();
-                swerve.addVisionMeasurement(poseUnwrapped.estimatedPose.toPose2d(), poseUnwrapped.timestampSeconds,
-                        false,
-                        0.5);
+                swerve.addVisionMeasurement(poseUnwrapped.estimatedPose.toPose2d(), poseUnwrapped.timestampSeconds, false, .5);
             }
 
         }));
@@ -75,6 +77,44 @@ public final class Autos {
                 eventMap,
                 swerve);
         return Commands.sequence(autoBuilder.fullAuto(e2Traj));
+    }
+
+    public static CommandBase ifOfFedPath(SwerveSubsystem swerveSubsystem, Gripper gripper) {
+        PathPlannerTrajectory traj = PathPlanner.loadPath("Trying a in of feed",
+                new PathConstraints(Auton.MAX_SPEED, Auton.MAX_ACCEL));
+        HashMap<String, Command> eventMap = new HashMap<>();
+        eventMap.put("infed", OneMechanism.runArms(ScoringPositions.ACQUIRE_FLOOR_CUBE)
+                .andThen(gripper.runMotorIn().withTimeout(0.5)));
+        SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+            swerveSubsystem::getRobotPose, 
+            swerveSubsystem::resetOdometry, 
+            new PIDConstants(Auton.yAutoPID.p, Auton.yAutoPID.i, Auton.yAutoPID.d), 
+            new PIDConstants(Auton.angleAutoPID.p, Auton.angleAutoPID.i, Auton.angleAutoPID.d), 
+            swerveSubsystem::setChassisSpeeds, 
+            eventMap, 
+            swerveSubsystem, gripper);
+        return Commands.sequence(autoBuilder.fullAuto(traj));
+    }
+
+    public static CommandBase trackPath(SwerveSubsystem swerveSubsystem, Gripper gripper) {
+        PathPlannerTrajectory traj = PathPlanner.loadPath("GamePieceTrack",
+                new PathConstraints(Auton.MAX_SPEED, Auton.MAX_ACCEL));
+        HashMap<String, Command> eventMap = new HashMap<>();
+        eventMap.put("StartTrack", new LimelightSquare(
+            () -> false,
+            true,
+        () -> (Auton.MAX_SPEED / 4.),
+        () -> 0., swerveSubsystem).withTimeout(2));
+        SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+            swerveSubsystem::getRobotPose,
+            swerveSubsystem::resetOdometry,
+            new PIDConstants(Auton.yAutoPID.p, Auton.yAutoPID.i, Auton.yAutoPID.d),
+            new PIDConstants(Auton.angleAutoPID.p, Auton.angleAutoPID.i, Auton.angleAutoPID.d),
+            swerveSubsystem::setChassisSpeeds,
+            eventMap,
+            swerveSubsystem,
+            gripper);
+        return Commands.sequence(autoBuilder.fullAuto(traj));
     }
 
     private Autos() {
